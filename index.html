@@ -317,52 +317,10 @@
 
             <!-- Architecture diagram -->
             <div class="figure-box">
-                <!-- SVG inline architecture diagram -->
-                <svg viewBox="0 0 560 280" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:auto; background:#f8fafc; border-radius:12px;">
-                    <rect x="0" y="0" width="560" height="280" fill="#f8fafc" rx="12" />
-
-                    <!-- Input -->
-                    <rect x="20" y="50" width="70" height="40" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5" />
-                    <text x="34" y="74" font-size="13" font-weight="500" fill="#1e293b">Input</text>
-
-                    <!-- DSC Blocks -->
-                    <rect x="120" y="30" width="100" height="80" rx="10" fill="#e2e8f0" stroke="#475569" stroke-width="1.2" />
-                    <text x="132" y="58" font-size="12" font-weight="600" fill="#0b1a2e">DSC</text>
-                    <text x="132" y="76" font-size="11" fill="#334155">+ ResNorm</text>
-                    <text x="132" y="94" font-size="11" fill="#334155">(×4)</text>
-
-                    <!-- Arrow -->
-                    <line x1="220" y1="70" x2="255" y2="70" stroke="#475569" stroke-width="1.8" marker-end="url(#arrow)" />
-
-                    <!-- AttnGAP -->
-                    <rect x="260" y="40" width="110" height="60" rx="10" fill="#d1fae5" stroke="#059669" stroke-width="1.5" />
-                    <text x="272" y="62" font-size="12" font-weight="600" fill="#065f46">AttnGAP</text>
-                    <text x="272" y="82" font-size="11" fill="#065f46">attention pooling</text>
-
-                    <!-- Arrow -->
-                    <line x1="370" y1="70" x2="405" y2="70" stroke="#475569" stroke-width="1.8" marker-end="url(#arrow)" />
-
-                    <!-- Classifier -->
-                    <rect x="410" y="45" width="80" height="50" rx="10" fill="#fce7f3" stroke="#db2777" stroke-width="1.5" />
-                    <text x="425" y="68" font-size="12" font-weight="600" fill="#9d174d">Classifier</text>
-
-                    <!-- Output -->
-                    <rect x="510" y="52" width="40" height="36" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5" />
-                    <text x="519" y="74" font-size="12" font-weight="500" fill="#1e293b">out</text>
-
-                    <!-- Defs arrow -->
-                    <defs>
-                        <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
-                            <path d="M0,0 L8,4 L0,8 Z" fill="#475569" />
-                        </marker>
-                    </defs>
-                    <!-- labels -->
-                    <text x="120" y="132" font-size="11" fill="#64748b">Depthwise separable</text>
-                    <text x="120" y="146" font-size="11" fill="#64748b">+ residual connections</text>
-                    <text x="440" y="120" font-size="11" fill="#64748b">Hybrid BN+ResNorm</text>
-                </svg>
+                <!-- Image architecture diagram -->
+                <img src="/images/ICASSP2027_WithoutBlock.svg" alt="LightEchoNet student architecture diagram" style="width:100%; height:auto; background:#f8fafc; border-radius:12px;" />
                 <div class="caption">
-                    <i class="fas fa-sitemap"></i> LightEchoNet student architecture (DSC blocks + ResNorm + AttnGAP)
+                    <i class="fas fa-sitemap"></i> Overview of the Teacher–Student Architecture
                 </div>
             </div>
 
