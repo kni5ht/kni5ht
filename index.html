@@ -373,6 +373,43 @@
     </div>
 </section>
 
+<!-- ==================== MOTIVATION (NEW) ==================== -->
+<section>
+    <div class="container">
+        <div class="section-title">
+            <i class="fas fa-bullseye"></i> Motivation
+        </div>
+        <div style="background:#ffffff; border-radius:20px; padding:28px 32px; border:1px solid #eef2f6; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
+            <p style="font-size:1.05rem; color:#0b1a2e; margin-bottom:20px;">
+                Deploying audio classification models on mobile, wearable, and embedded devices is challenging because these platforms have strict limits on memory, computation, storage, and power. Although large pretrained models achieve strong performance, they are often too expensive for practical deployment. Compact models are more efficient, but reducing their size can weaken their ability to learn robust audio representations, especially under background noise, acoustic variability, and recording-device mismatch.
+            </p>
+            <h4 style="font-weight:600; font-size:1.1rem; margin-bottom:12px; color:#0b1a2e;">Motivational Points</h4>
+            <ul style="list-style:none; padding:0; display:flex; flex-direction:column; gap:10px;">
+                <li style="display:flex; align-items:flex-start; gap:12px; color:#1e293b;">
+                    <i class="fas fa-balance-scale" style="color:#2563eb; margin-top:4px; width:20px; text-align:center;"></i>
+                    <span><strong>Accuracy–efficiency trade-off:</strong> Lightweight models must remain accurate while using very few parameters and operations.</span>
+                </li>
+                <li style="display:flex; align-items:flex-start; gap:12px; color:#1e293b;">
+                    <i class="fas fa-arrow-up" style="color:#2563eb; margin-top:4px; width:20px; text-align:center;"></i>
+                    <span><strong>Limitations of conventional distillation:</strong> Output-level knowledge distillation does not fully transfer the teacher’s intermediate representations.</span>
+                </li>
+                <li style="display:flex; align-items:flex-start; gap:12px; color:#1e293b;">
+                    <i class="fas fa-cubes" style="color:#2563eb; margin-top:4px; width:20px; text-align:center;"></i>
+                    <span><strong>Architectural mismatch:</strong> Direct feature matching is difficult when the teacher and student have different structures and feature dimensions.</span>
+                </li>
+                <li style="display:flex; align-items:flex-start; gap:12px; color:#1e293b;">
+                    <i class="fas fa-microchip" style="color:#2563eb; margin-top:4px; width:20px; text-align:center;"></i>
+                    <span><strong>No extra deployment cost:</strong> The student should benefit from powerful teachers during training without increasing its inference-time complexity.</span>
+                </li>
+                <li style="display:flex; align-items:flex-start; gap:12px; color:#1e293b;">
+                    <i class="fas fa-handshake" style="color:#2563eb; margin-top:4px; width:20px; text-align:center;"></i>
+                    <span><strong>Complementary supervision:</strong> Combining a structurally aligned inner teacher with a strong outer teacher can provide both feature-level and output-level guidance.</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</section>
+
 <!-- ==================== ARCHITECTURE + DISTILLATION DIAGRAMS ==================== -->
 <section>
     <div class="container">
