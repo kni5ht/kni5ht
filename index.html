@@ -11,9 +11,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-    <!-- Medium Zoom for image zoom functionality -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.css">
-
     <style>
         /* ---------- Reset & Base ---------- */
         * {
@@ -214,7 +211,7 @@
             color: #0b1a2e;
         }
 
-        /* --- SVG showcase above abstract --- */
+        /* --- SVG showcase with hover zoom (lens effect) --- */
         .model-svg-section {
             background: #ffffff;
             border-radius: 20px;
@@ -236,44 +233,81 @@
             color: #2563eb;
             font-size: 1.6rem;
         }
-        .model-svg-wrapper {
-            background: #fafcff;
-            border-radius: 16px;
-            padding: 12px;
-            border: 1px solid #e9edf2;
-            display: flex;
-            justify-content: center;
-            position: relative;
-            cursor: pointer;
-        }
-        .model-svg-wrapper svg,
-        .model-svg-wrapper img {
-            max-width: 100%;
-            height: auto;
-            display: block;
-        }
-        /* Zoom hint overlay */
-        .model-svg-wrapper .zoom-hint {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(0,0,0,0.7);
-            color: #fff;
-            padding: 8px 14px;
-            border-radius: 30px;
+        .model-svg-section .svg-title .hint {
             font-size: 0.8rem;
+            font-weight: 400;
+            color: #64748b;
+            margin-left: auto;
+        }
+        .model-svg-section .svg-title .hint i {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        /* Zoom container */
+        .zoom-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 16px;
+            border: 1px solid #e9edf2;
+            background: #fafcff;
+            cursor: none;
+            touch-action: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        .zoom-container img {
+            display: block;
+            width: 100%;
+            height: auto;
+            pointer-events: none;
+            -webkit-user-drag: none;
+        }
+
+        /* The zoom lens (magnifying glass) */
+        .zoom-lens {
+            position: absolute;
+            border: 2px solid #2563eb;
+            border-radius: 50%;
+            width: 180px;
+            height: 180px;
+            background-repeat: no-repeat;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.15s ease;
+            box-shadow: 0 0 20px rgba(37, 99, 235, 0.25), inset 0 0 20px rgba(255,255,255,0.05);
+            z-index: 10;
+            background-color: rgba(255,255,255,0.03);
+            backdrop-filter: blur(1px);
+        }
+        .zoom-lens.active {
+            opacity: 1;
+        }
+
+        /* Zoom hint overlay */
+        .zoom-hint-overlay {
+            position: absolute;
+            bottom: 16px;
+            right: 16px;
+            background: rgba(0,0,0,0.65);
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 0.75rem;
             font-weight: 500;
             pointer-events: none;
-            opacity: 0.7;
-            transition: opacity 0.3s;
             backdrop-filter: blur(4px);
             display: flex;
             align-items: center;
             gap: 6px;
+            z-index: 5;
+            opacity: 0.8;
+            transition: opacity 0.3s;
         }
-        .model-svg-wrapper:hover .zoom-hint {
-            opacity: 1;
+        .zoom-container:hover .zoom-hint-overlay {
+            opacity: 0.3;
         }
+
         .model-svg-section .svg-caption {
             text-align: center;
             margin-top: 12px;
@@ -283,16 +317,6 @@
         .model-svg-section .svg-caption i {
             margin-right: 6px;
             color: #64748b;
-        }
-
-        /* Medium-zoom overrides for better UX */
-        .medium-zoom-overlay {
-            background: rgba(10, 20, 40, 0.92) !important;
-            backdrop-filter: blur(4px);
-        }
-        .medium-zoom-image {
-            border-radius: 12px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
         }
 
         /* ---------- Results table ---------- */
@@ -341,11 +365,19 @@
             .abstract-box { padding: 20px; }
             .card { padding: 20px; }
             .model-svg-section .svg-title { font-size: 1.25rem; }
-            .model-svg-wrapper .zoom-hint {
-                font-size: 0.7rem;
-                padding: 5px 10px;
-                bottom: 12px;
-                right: 12px;
+            .zoom-lens {
+                width: 120px;
+                height: 120px;
+            }
+            .model-svg-section .svg-title .hint {
+                font-size: 0.65rem;
+            }
+        }
+        @media (pointer: coarse) {
+            /* On touch devices, make the lens a bit bigger */
+            .zoom-lens {
+                width: 150px;
+                height: 150px;
             }
         }
     </style>
@@ -377,23 +409,24 @@
         <div class="model-svg-section">
             <div class="svg-title">
                 <i class="fas fa-robot"></i> Model Architecture
-                <span style="font-size:0.8rem; font-weight:400; color:#64748b; margin-left:auto;">
-                    <i class="fas fa-mouse-pointer"></i> Click to zoom
+                <span class="hint">
+                    <i class="fas fa-mouse-pointer"></i> Hover or touch to zoom in
                 </span>
             </div>
-            <div class="model-svg-wrapper" id="svg-zoom-container">
-                <!-- SVG image with zoom capability via medium-zoom -->
+
+            <!-- Zoom container -->
+            <div class="zoom-container" id="zoomContainer">
                 <img 
                     src="/kni5ht/images/Stu_Teachers_Detaileddd.svg" 
                     alt="LightEchoNet teacher-student architecture diagram" 
-                    id="svg-zoom-image"
-                    style="max-width:100%; height:auto; display:block;"
-                    data-zoomable
+                    id="zoomImage"
                 />
-                <div class="zoom-hint">
-                    <i class="fas fa-search-plus"></i> Click to zoom
+                <div class="zoom-lens" id="zoomLens"></div>
+                <div class="zoom-hint-overlay">
+                    <i class="fas fa-search-plus"></i> Zoom
                 </div>
             </div>
+
             <div class="svg-caption">
                 <i class="fas fa-sitemap"></i> Overview of the LightEchoNet teacher–student architecture with two‑stage distillation flow.
             </div>
@@ -590,39 +623,164 @@
     </div>
 </div>
 
-<!-- Medium Zoom JavaScript -->
-<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js"></script>
+<!-- Hover Zoom Script (lens effect) -->
 <script>
     (function() {
-        // Initialize medium zoom on the SVG image
-        const zoomImage = document.getElementById('svg-zoom-image');
-        if (zoomImage) {
-            const zoom = mediumZoom(zoomImage, {
-                margin: 20,
-                background: 'rgba(10, 20, 40, 0.92)',
-                scrollOffset: 40,
-                container: null,
-                template: null
-            });
+        const container = document.getElementById('zoomContainer');
+        const image = document.getElementById('zoomImage');
+        const lens = document.getElementById('zoomLens');
 
-            // Add a small visual feedback when zoomed
-            zoom.on('open', function() {
-                // The image is now zoomed
-                const hint = document.querySelector('.model-svg-wrapper .zoom-hint');
-                if (hint) {
-                    hint.innerHTML = '<i class="fas fa-search-minus"></i> Click to zoom out';
-                    hint.style.opacity = '1';
-                }
-            });
+        if (!container || !image || !lens) return;
 
-            zoom.on('close', function() {
-                const hint = document.querySelector('.model-svg-wrapper .zoom-hint');
-                if (hint) {
-                    hint.innerHTML = '<i class="fas fa-search-plus"></i> Click to zoom';
-                    hint.style.opacity = '0.7';
-                }
-            });
+        // Zoom factor (how much magnification)
+        const ZOOM_FACTOR = 2.5;
+        let lensSize = 180;
+
+        // Function to update lens size based on container width
+        function updateLensSize() {
+            const containerWidth = container.offsetWidth;
+            if (containerWidth < 500) {
+                lensSize = 120;
+            } else if (containerWidth < 800) {
+                lensSize = 150;
+            } else {
+                lensSize = 180;
+            }
+            // On touch devices, make it a bit bigger for easier use
+            if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+                lensSize = Math.min(lensSize + 30, 200);
+            }
+            lens.style.width = lensSize + 'px';
+            lens.style.height = lensSize + 'px';
         }
+
+        // Set initial size
+        updateLensSize();
+        window.addEventListener('resize', updateLensSize);
+
+        // Get the position of the mouse/touch relative to the image
+        function getCursorPosition(e) {
+            const rect = container.getBoundingClientRect();
+            let clientX, clientY;
+
+            if (e.touches) {
+                // Touch event
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else {
+                // Mouse event
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+
+            // Calculate position relative to the container
+            let x = clientX - rect.left;
+            let y = clientY - rect.top;
+
+            // Clamp to container bounds
+            x = Math.max(0, Math.min(x, rect.width));
+            y = Math.max(0, Math.min(y, rect.height));
+
+            return { x, y };
+        }
+
+        // Update the lens position and background
+        function updateLens(e) {
+            const rect = container.getBoundingClientRect();
+            const pos = getCursorPosition(e);
+
+            // Lens position (center it on cursor)
+            const lensHalf = lensSize / 2;
+            let lensX = pos.x - lensHalf;
+            let lensY = pos.y - lensHalf;
+
+            // Clamp lens so it stays within container
+            lensX = Math.max(0, Math.min(lensX, rect.width - lensSize));
+            lensY = Math.max(0, Math.min(lensY, rect.height - lensSize));
+
+            lens.style.left = lensX + 'px';
+            lens.style.top = lensY + 'px';
+
+            // Calculate the background position for the zoom effect
+            // The ratio of the lens position to the container size, mapped to the image's natural size
+            const imgNaturalWidth = image.naturalWidth || image.width;
+            const imgNaturalHeight = image.naturalHeight || image.height;
+
+            // The display size of the image
+            const displayWidth = rect.width;
+            const displayHeight = rect.height;
+
+            // Calculate the scale factor between display and natural size
+            const scaleX = imgNaturalWidth / displayWidth;
+            const scaleY = imgNaturalHeight / displayHeight;
+
+            // Background size: we want the zoomed area to be ZOOM_FACTOR times larger
+            const bgSizeX = lensSize * ZOOM_FACTOR * scaleX;
+            const bgSizeY = lensSize * ZOOM_FACTOR * scaleY;
+
+            // Background position: where to show in the zoomed image
+            // The lens covers a portion of the image. We want to show that portion magnified.
+            // The lens is at position (lensX, lensY) relative to the container.
+            // We need to map that to the natural image coordinates.
+            const bgPosX = -(lensX * scaleX * ZOOM_FACTOR);
+            const bgPosY = -(lensY * scaleY * ZOOM_FACTOR);
+
+            lens.style.backgroundImage = `url('${image.src}')`;
+            lens.style.backgroundSize = `${bgSizeX}px ${bgSizeY}px`;
+            lens.style.backgroundPosition = `${bgPosX}px ${bgPosY}px`;
+            lens.style.backgroundRepeat = 'no-repeat';
+        }
+
+        // Show/hide lens
+        function showLens() {
+            lens.classList.add('active');
+        }
+
+        function hideLens() {
+            lens.classList.remove('active');
+        }
+
+        // --- Mouse events ---
+        container.addEventListener('mouseenter', showLens);
+        container.addEventListener('mouseleave', hideLens);
+        container.addEventListener('mousemove', updateLens);
+
+        // --- Touch events (for mobile/tablet) ---
+        container.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            showLens();
+            updateLens(e);
+        }, { passive: false });
+
+        container.addEventListener('touchmove', function(e) {
+            e.preventDefault();
+            updateLens(e);
+        }, { passive: false });
+
+        container.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            hideLens();
+        }, { passive: false });
+
+        container.addEventListener('touchcancel', function(e) {
+            hideLens();
+        }, { passive: true });
+
+        // Update lens when image loads
+        image.addEventListener('load', function() {
+            updateLensSize();
+        });
+
+        // Also update on window resize
+        window.addEventListener('resize', function() {
+            updateLensSize();
+        });
+
+        // If the image is already loaded, trigger an update
+        if (image.complete) {
+            updateLensSize();
+        }
+
     })();
 </script>
 
