@@ -368,10 +368,19 @@
             flex: 1 1 45%;
             min-width: 280px;
         }
+        /* For the second subsection: allow text to grow freely */
+        .arch-detail.free-text .text {
+            flex: 1 1 100%;
+        }
         .arch-detail .image {
             flex: 1 1 45%;
             min-width: 280px;
             text-align: center;
+            align-self: flex-start; /* keep image from stretching */
+        }
+        .arch-detail.free-text .image {
+            flex: 1 1 45%;
+            min-width: 280px;
         }
         .arch-detail .image img {
             max-width: 100%;
@@ -580,8 +589,8 @@
             </div>
         </div>
 
-        <!-- ---- Subsection 2: Staged Inner–Outer Knowledge Distillation ---- -->
-        <div class="arch-detail">
+        <!-- ---- Subsection 2: Staged Inner–Outer Knowledge Distillation (free-text class added) ---- -->
+        <div class="arch-detail free-text">
             <div class="text">
                 <h4><i class="fas fa-chalkboard-teacher"></i> Staged Inner–Outer Knowledge Distillation</h4>
                 <p>
