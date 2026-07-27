@@ -210,21 +210,52 @@
             font-size: 1.05rem;
             color: #0b1a2e;
         }
-        /* new style for SVG container inside abstract */
-        .abstract-svg-wrapper {
+
+        /* --- NEW: SVG showcase above abstract --- */
+        .model-svg-section {
             background: #ffffff;
+            border-radius: 20px;
+            padding: 24px 24px 20px;
+            margin-bottom: 32px;
+            border: 1px solid #eef2f6;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+        }
+        .model-svg-section .svg-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            color: #0b1a2e;
+        }
+        .model-svg-section .svg-title i {
+            color: #2563eb;
+            font-size: 1.6rem;
+        }
+        .model-svg-wrapper {
+            background: #fafcff;
             border-radius: 16px;
             padding: 12px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            border: 1px solid #e2e8f0;
+            border: 1px solid #e9edf2;
             display: flex;
             justify-content: center;
         }
-        .abstract-svg-wrapper svg {
+        .model-svg-wrapper svg,
+        .model-svg-wrapper img {
             max-width: 100%;
             height: auto;
             display: block;
+        }
+        .model-svg-section .svg-caption {
+            text-align: center;
+            margin-top: 12px;
+            font-size: 0.95rem;
+            color: #475569;
+        }
+        .model-svg-section .svg-caption i {
+            margin-right: 6px;
+            color: #64748b;
         }
 
         /* ---------- Results table ---------- */
@@ -272,6 +303,7 @@
             .section-title { font-size: 1.6rem; }
             .abstract-box { padding: 20px; }
             .card { padding: 20px; }
+            .model-svg-section .svg-title { font-size: 1.25rem; }
         }
     </style>
 </head>
@@ -296,17 +328,31 @@
     </div>
 </header>
 
+<!-- ==================== MODEL SVG (above abstract) ==================== -->
+<section style="padding-bottom: 20px;">
+    <div class="container">
+        <div class="model-svg-section">
+            <div class="svg-title">
+                <i class="fas fa-robot"></i> Model Architecture
+            </div>
+            <div class="model-svg-wrapper">
+                <!-- SVG image as requested, placed outside abstract box with its own title -->
+                <img src="/kni5ht/images/Stu_Teachers_Detaileddd.svg" alt="LightEchoNet teacher-student architecture diagram" style="max-width:100%; height:auto; display:block;" />
+            </div>
+            <div class="svg-caption">
+                <i class="fas fa-sitemap"></i> Overview of the LightEchoNet teacher–student architecture with two‑stage distillation flow.
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- ==================== ABSTRACT ==================== -->
-<section>
+<section style="padding-top: 0;">
     <div class="container">
         <div class="section-title">
             <i class="fas fa-file-alt"></i> Abstract
         </div>
         <div class="abstract-box">
-            <!-- SVG image inserted at the top of abstract, inside a box -->
-            <div class="abstract-svg-wrapper">
-                <img src="/kni5ht/images/Stu_Teachers_Detaileddd.svg" alt="Model architecture diagram" style="max-width:100%; height:auto; display:block;" />
-            </div>
             <p>
                 <strong>LightEchoNet</strong> is a lightweight audio classification framework that satisfies the
                 most stringent edge‑device constraints (&lt;128 KB, &lt;30 MMACs) while remaining competitive with
