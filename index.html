@@ -211,7 +211,7 @@
             color: #0b1a2e;
         }
 
-        /* --- SVG showcase with hover zoom (lens effect) --- */
+        /* --- SVG showcase with zoom --- */
         .model-svg-section {
             background: #ffffff;
             border-radius: 20px;
@@ -228,6 +228,7 @@
             gap: 12px;
             margin-bottom: 16px;
             color: #0b1a2e;
+            flex-wrap: wrap;
         }
         .model-svg-section .svg-title i {
             color: #2563eb;
@@ -244,68 +245,71 @@
             color: #64748b;
         }
 
-        /* Zoom container */
-        .zoom-container {
+        /* Zoom container with scrollable zoom */
+        .zoom-wrapper {
             position: relative;
-            overflow: hidden;
+            overflow: auto;
             border-radius: 16px;
             border: 1px solid #e9edf2;
             background: #fafcff;
-            cursor: none;
-            touch-action: none;
-            -webkit-user-select: none;
-            user-select: none;
+            max-height: 800px;
+            cursor: zoom-in;
+            -webkit-overflow-scrolling: touch;
         }
-        .zoom-container img {
+        .zoom-wrapper img {
             display: block;
             width: 100%;
             height: auto;
-            pointer-events: none;
-            -webkit-user-drag: none;
+            transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transform-origin: 0 0;
+        }
+        .zoom-wrapper.zoomed {
+            cursor: zoom-out;
+        }
+        .zoom-wrapper.zoomed img {
+            width: 200%;
+            transform: scale(2);
         }
 
-        /* The zoom lens (magnifying glass) */
-        .zoom-lens {
-            position: absolute;
-            border: 2px solid #2563eb;
-            border-radius: 50%;
-            width: 180px;
-            height: 180px;
-            background-repeat: no-repeat;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.15s ease;
-            box-shadow: 0 0 20px rgba(37, 99, 235, 0.25), inset 0 0 20px rgba(255,255,255,0.05);
-            z-index: 10;
-            background-color: rgba(255,255,255,0.03);
-            backdrop-filter: blur(1px);
-        }
-        .zoom-lens.active {
-            opacity: 1;
-        }
-
-        /* Zoom hint overlay */
-        .zoom-hint-overlay {
-            position: absolute;
-            bottom: 16px;
-            right: 16px;
-            background: rgba(0,0,0,0.65);
-            color: #fff;
-            padding: 6px 14px;
-            border-radius: 30px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            pointer-events: none;
-            backdrop-filter: blur(4px);
+        /* Zoom controls */
+        .zoom-controls {
             display: flex;
             align-items: center;
-            gap: 6px;
-            z-index: 5;
-            opacity: 0.8;
-            transition: opacity 0.3s;
+            gap: 8px;
+            margin-top: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
         }
-        .zoom-container:hover .zoom-hint-overlay {
-            opacity: 0.3;
+        .zoom-controls button {
+            background: #f1f5f9;
+            border: 1px solid #dce2ea;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #0b1a2e;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .zoom-controls button:hover {
+            background: #e2e8f0;
+            border-color: #94a3b8;
+        }
+        .zoom-controls button:active {
+            transform: scale(0.96);
+        }
+        .zoom-controls button i {
+            font-size: 0.9rem;
+        }
+        .zoom-controls .zoom-level {
+            font-size: 0.85rem;
+            color: #475569;
+            min-width: 50px;
+            text-align: center;
         }
 
         .model-svg-section .svg-caption {
@@ -365,19 +369,23 @@
             .abstract-box { padding: 20px; }
             .card { padding: 20px; }
             .model-svg-section .svg-title { font-size: 1.25rem; }
-            .zoom-lens {
-                width: 120px;
-                height: 120px;
-            }
             .model-svg-section .svg-title .hint {
                 font-size: 0.65rem;
+                margin-left: 0;
+                width: 100%;
+            }
+            .zoom-wrapper {
+                max-height: 500px;
+            }
+            .zoom-wrapper.zoomed img {
+                width: 300%;
+                transform: scale(3);
             }
         }
-        @media (pointer: coarse) {
-            /* On touch devices, make the lens a bit bigger */
-            .zoom-lens {
-                width: 150px;
-                height: 150px;
+        @media (max-width: 400px) {
+            .zoom-wrapper.zoomed img {
+                width: 400%;
+                transform: scale(4);
             }
         }
     </style>
@@ -410,21 +418,31 @@
             <div class="svg-title">
                 <i class="fas fa-robot"></i> Model Architecture
                 <span class="hint">
-                    <i class="fas fa-mouse-pointer"></i> Hover or touch to zoom in
+                    <i class="fas fa-mouse-pointer"></i> Click to zoom in/out · Scroll to pan
                 </span>
             </div>
 
-            <!-- Zoom container -->
-            <div class="zoom-container" id="zoomContainer">
+            <!-- Zoom wrapper with scroll -->
+            <div class="zoom-wrapper" id="zoomWrapper">
                 <img 
                     src="/kni5ht/images/Stu_Teachers_Detaileddd.svg" 
                     alt="LightEchoNet teacher-student architecture diagram" 
                     id="zoomImage"
                 />
-                <div class="zoom-lens" id="zoomLens"></div>
-                <div class="zoom-hint-overlay">
-                    <i class="fas fa-search-plus"></i> Zoom
-                </div>
+            </div>
+
+            <!-- Zoom controls -->
+            <div class="zoom-controls">
+                <button id="zoomOutBtn" title="Zoom out">
+                    <i class="fas fa-search-minus"></i> Zoom Out
+                </button>
+                <button id="zoomResetBtn" title="Reset zoom">
+                    <i class="fas fa-expand"></i> Reset
+                </button>
+                <button id="zoomInBtn" title="Zoom in">
+                    <i class="fas fa-search-plus"></i> Zoom In
+                </button>
+                <span class="zoom-level" id="zoomLevel">1×</span>
             </div>
 
             <div class="svg-caption">
@@ -623,163 +641,119 @@
     </div>
 </div>
 
-<!-- Hover Zoom Script (lens effect) -->
+<!-- Zoom Script -->
 <script>
     (function() {
-        const container = document.getElementById('zoomContainer');
+        const wrapper = document.getElementById('zoomWrapper');
         const image = document.getElementById('zoomImage');
-        const lens = document.getElementById('zoomLens');
+        const zoomInBtn = document.getElementById('zoomInBtn');
+        const zoomOutBtn = document.getElementById('zoomOutBtn');
+        const zoomResetBtn = document.getElementById('zoomResetBtn');
+        const zoomLevelDisplay = document.getElementById('zoomLevel');
 
-        if (!container || !image || !lens) return;
+        let currentZoom = 1;
+        const MIN_ZOOM = 1;
+        const MAX_ZOOM = 4;
+        const ZOOM_STEP = 0.25;
 
-        // Zoom factor (how much magnification)
-        const ZOOM_FACTOR = 2.5;
-        let lensSize = 180;
-
-        // Function to update lens size based on container width
-        function updateLensSize() {
-            const containerWidth = container.offsetWidth;
-            if (containerWidth < 500) {
-                lensSize = 120;
-            } else if (containerWidth < 800) {
-                lensSize = 150;
+        function updateZoom(zoomFactor) {
+            currentZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoomFactor));
+            const percent = Math.round(currentZoom * 100);
+            image.style.width = (currentZoom * 100) + '%';
+            image.style.transform = `scale(${currentZoom})`;
+            zoomLevelDisplay.textContent = currentZoom + '×';
+            
+            // Update cursor based on zoom state
+            if (currentZoom > 1) {
+                wrapper.style.cursor = 'zoom-out';
+                wrapper.classList.add('zoomed');
             } else {
-                lensSize = 180;
+                wrapper.style.cursor = 'zoom-in';
+                wrapper.classList.remove('zoomed');
             }
-            // On touch devices, make it a bit bigger for easier use
-            if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
-                lensSize = Math.min(lensSize + 30, 200);
-            }
-            lens.style.width = lensSize + 'px';
-            lens.style.height = lensSize + 'px';
         }
 
-        // Set initial size
-        updateLensSize();
-        window.addEventListener('resize', updateLensSize);
+        function zoomIn() {
+            updateZoom(currentZoom + ZOOM_STEP);
+        }
 
-        // Get the position of the mouse/touch relative to the image
-        function getCursorPosition(e) {
-            const rect = container.getBoundingClientRect();
-            let clientX, clientY;
+        function zoomOut() {
+            updateZoom(currentZoom - ZOOM_STEP);
+        }
 
-            if (e.touches) {
-                // Touch event
-                clientX = e.touches[0].clientX;
-                clientY = e.touches[0].clientY;
+        function resetZoom() {
+            updateZoom(1);
+            wrapper.scrollTop = 0;
+            wrapper.scrollLeft = 0;
+        }
+
+        // Toggle zoom on click
+        wrapper.addEventListener('click', function(e) {
+            if (currentZoom > 1) {
+                resetZoom();
             } else {
-                // Mouse event
-                clientX = e.clientX;
-                clientY = e.clientY;
+                zoomIn();
             }
-
-            // Calculate position relative to the container
-            let x = clientX - rect.left;
-            let y = clientY - rect.top;
-
-            // Clamp to container bounds
-            x = Math.max(0, Math.min(x, rect.width));
-            y = Math.max(0, Math.min(y, rect.height));
-
-            return { x, y };
-        }
-
-        // Update the lens position and background
-        function updateLens(e) {
-            const rect = container.getBoundingClientRect();
-            const pos = getCursorPosition(e);
-
-            // Lens position (center it on cursor)
-            const lensHalf = lensSize / 2;
-            let lensX = pos.x - lensHalf;
-            let lensY = pos.y - lensHalf;
-
-            // Clamp lens so it stays within container
-            lensX = Math.max(0, Math.min(lensX, rect.width - lensSize));
-            lensY = Math.max(0, Math.min(lensY, rect.height - lensSize));
-
-            lens.style.left = lensX + 'px';
-            lens.style.top = lensY + 'px';
-
-            // Calculate the background position for the zoom effect
-            // The ratio of the lens position to the container size, mapped to the image's natural size
-            const imgNaturalWidth = image.naturalWidth || image.width;
-            const imgNaturalHeight = image.naturalHeight || image.height;
-
-            // The display size of the image
-            const displayWidth = rect.width;
-            const displayHeight = rect.height;
-
-            // Calculate the scale factor between display and natural size
-            const scaleX = imgNaturalWidth / displayWidth;
-            const scaleY = imgNaturalHeight / displayHeight;
-
-            // Background size: we want the zoomed area to be ZOOM_FACTOR times larger
-            const bgSizeX = lensSize * ZOOM_FACTOR * scaleX;
-            const bgSizeY = lensSize * ZOOM_FACTOR * scaleY;
-
-            // Background position: where to show in the zoomed image
-            // The lens covers a portion of the image. We want to show that portion magnified.
-            // The lens is at position (lensX, lensY) relative to the container.
-            // We need to map that to the natural image coordinates.
-            const bgPosX = -(lensX * scaleX * ZOOM_FACTOR);
-            const bgPosY = -(lensY * scaleY * ZOOM_FACTOR);
-
-            lens.style.backgroundImage = `url('${image.src}')`;
-            lens.style.backgroundSize = `${bgSizeX}px ${bgSizeY}px`;
-            lens.style.backgroundPosition = `${bgPosX}px ${bgPosY}px`;
-            lens.style.backgroundRepeat = 'no-repeat';
-        }
-
-        // Show/hide lens
-        function showLens() {
-            lens.classList.add('active');
-        }
-
-        function hideLens() {
-            lens.classList.remove('active');
-        }
-
-        // --- Mouse events ---
-        container.addEventListener('mouseenter', showLens);
-        container.addEventListener('mouseleave', hideLens);
-        container.addEventListener('mousemove', updateLens);
-
-        // --- Touch events (for mobile/tablet) ---
-        container.addEventListener('touchstart', function(e) {
-            e.preventDefault();
-            showLens();
-            updateLens(e);
-        }, { passive: false });
-
-        container.addEventListener('touchmove', function(e) {
-            e.preventDefault();
-            updateLens(e);
-        }, { passive: false });
-
-        container.addEventListener('touchend', function(e) {
-            e.preventDefault();
-            hideLens();
-        }, { passive: false });
-
-        container.addEventListener('touchcancel', function(e) {
-            hideLens();
-        }, { passive: true });
-
-        // Update lens when image loads
-        image.addEventListener('load', function() {
-            updateLensSize();
         });
 
-        // Also update on window resize
+        // Button controls
+        zoomInBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            zoomIn();
+        });
+
+        zoomOutBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            zoomOut();
+        });
+
+        zoomResetBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            resetZoom();
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Only if wrapper is visible and in viewport
+            const rect = wrapper.getBoundingClientRect();
+            if (rect.bottom < 0 || rect.top > window.innerHeight) return;
+            
+            if (e.key === '+' || e.key === '=') {
+                e.preventDefault();
+                zoomIn();
+            } else if (e.key === '-' || e.key === '_') {
+                e.preventDefault();
+                zoomOut();
+            } else if (e.key === '0') {
+                e.preventDefault();
+                resetZoom();
+            }
+        });
+
+        // Mouse wheel zoom (with modifier key for better UX)
+        wrapper.addEventListener('wheel', function(e) {
+            if (e.ctrlKey || e.metaKey) {
+                e.preventDefault();
+                if (e.deltaY < 0) {
+                    zoomIn();
+                } else {
+                    zoomOut();
+                }
+            }
+        }, { passive: false });
+
+        // Initialize
+        updateZoom(1);
+
+        // Handle resize to keep image fitting properly
+        let resizeTimeout;
         window.addEventListener('resize', function() {
-            updateLensSize();
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(function() {
+                // Re-apply zoom level to handle container size changes
+                updateZoom(currentZoom);
+            }, 200);
         });
-
-        // If the image is already loaded, trigger an update
-        if (image.complete) {
-            updateLensSize();
-        }
 
     })();
 </script>
