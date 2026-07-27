@@ -210,6 +210,22 @@
             font-size: 1.05rem;
             color: #0b1a2e;
         }
+        /* new style for SVG container inside abstract */
+        .abstract-svg-wrapper {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: center;
+        }
+        .abstract-svg-wrapper svg {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
 
         /* ---------- Results table ---------- */
         .results-table {
@@ -287,6 +303,10 @@
             <i class="fas fa-file-alt"></i> Abstract
         </div>
         <div class="abstract-box">
+            <!-- SVG image inserted at the top of abstract, inside a box -->
+            <div class="abstract-svg-wrapper">
+                <img src="/kni5ht/images/Stu_Teachers_Detaileddd.svg" alt="Model architecture diagram" style="max-width:100%; height:auto; display:block;" />
+            </div>
             <p>
                 <strong>LightEchoNet</strong> is a lightweight audio classification framework that satisfies the
                 most stringent edge‑device constraints (&lt;128 KB, &lt;30 MMACs) while remaining competitive with
