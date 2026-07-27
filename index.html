@@ -211,7 +211,7 @@
             color: #0b1a2e;
         }
 
-        /* --- SVG showcase with zoom --- */
+        /* --- NEW: SVG showcase above abstract --- */
         .model-svg-section {
             background: #ffffff;
             border-radius: 20px;
@@ -228,90 +228,25 @@
             gap: 12px;
             margin-bottom: 16px;
             color: #0b1a2e;
-            flex-wrap: wrap;
         }
         .model-svg-section .svg-title i {
             color: #2563eb;
             font-size: 1.6rem;
         }
-        .model-svg-section .svg-title .hint {
-            font-size: 0.8rem;
-            font-weight: 400;
-            color: #64748b;
-            margin-left: auto;
-        }
-        .model-svg-section .svg-title .hint i {
-            font-size: 0.8rem;
-            color: #64748b;
-        }
-
-        /* Zoom container with scrollable zoom */
-        .zoom-wrapper {
-            position: relative;
-            overflow: auto;
-            border-radius: 16px;
-            border: 1px solid #e9edf2;
+        .model-svg-wrapper {
             background: #fafcff;
-            max-height: 800px;
-            cursor: zoom-in;
-            -webkit-overflow-scrolling: touch;
-        }
-        .zoom-wrapper img {
-            display: block;
-            width: 100%;
-            height: auto;
-            transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            transform-origin: 0 0;
-        }
-        .zoom-wrapper.zoomed {
-            cursor: zoom-out;
-        }
-        .zoom-wrapper.zoomed img {
-            width: 200%;
-            transform: scale(2);
-        }
-
-        /* Zoom controls */
-        .zoom-controls {
+            border-radius: 16px;
+            padding: 12px;
+            border: 1px solid #e9edf2;
             display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 12px;
             justify-content: center;
-            flex-wrap: wrap;
         }
-        .zoom-controls button {
-            background: #f1f5f9;
-            border: 1px solid #dce2ea;
-            border-radius: 8px;
-            padding: 8px 16px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            color: #0b1a2e;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-family: inherit;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
+        .model-svg-wrapper svg,
+        .model-svg-wrapper img {
+            max-width: 100%;
+            height: auto;
+            display: block;
         }
-        .zoom-controls button:hover {
-            background: #e2e8f0;
-            border-color: #94a3b8;
-        }
-        .zoom-controls button:active {
-            transform: scale(0.96);
-        }
-        .zoom-controls button i {
-            font-size: 0.9rem;
-        }
-        .zoom-controls .zoom-level {
-            font-size: 0.85rem;
-            color: #475569;
-            min-width: 50px;
-            text-align: center;
-        }
-
         .model-svg-section .svg-caption {
             text-align: center;
             margin-top: 12px;
@@ -369,24 +304,6 @@
             .abstract-box { padding: 20px; }
             .card { padding: 20px; }
             .model-svg-section .svg-title { font-size: 1.25rem; }
-            .model-svg-section .svg-title .hint {
-                font-size: 0.65rem;
-                margin-left: 0;
-                width: 100%;
-            }
-            .zoom-wrapper {
-                max-height: 500px;
-            }
-            .zoom-wrapper.zoomed img {
-                width: 300%;
-                transform: scale(3);
-            }
-        }
-        @media (max-width: 400px) {
-            .zoom-wrapper.zoomed img {
-                width: 400%;
-                transform: scale(4);
-            }
         }
     </style>
 </head>
@@ -417,34 +334,11 @@
         <div class="model-svg-section">
             <div class="svg-title">
                 <i class="fas fa-robot"></i> Model Architecture
-                <span class="hint">
-                    <i class="fas fa-mouse-pointer"></i> Click to zoom in/out · Scroll to pan
-                </span>
             </div>
-
-            <!-- Zoom wrapper with scroll -->
-            <div class="zoom-wrapper" id="zoomWrapper">
-                <img 
-                    src="/kni5ht/images/Stu_Teachers_Detaileddd.svg" 
-                    alt="LightEchoNet teacher-student architecture diagram" 
-                    id="zoomImage"
-                />
+            <div class="model-svg-wrapper">
+                <!-- SVG image as requested, placed outside abstract box with its own title -->
+                <img src="/kni5ht/images/Stu_Teachers_Detaileddd.svg" alt="LightEchoNet teacher-student architecture diagram" style="max-width:100%; height:auto; display:block;" />
             </div>
-
-            <!-- Zoom controls -->
-            <div class="zoom-controls">
-                <button id="zoomOutBtn" title="Zoom out">
-                    <i class="fas fa-search-minus"></i> Zoom Out
-                </button>
-                <button id="zoomResetBtn" title="Reset zoom">
-                    <i class="fas fa-expand"></i> Reset
-                </button>
-                <button id="zoomInBtn" title="Zoom in">
-                    <i class="fas fa-search-plus"></i> Zoom In
-                </button>
-                <span class="zoom-level" id="zoomLevel">1×</span>
-            </div>
-
             <div class="svg-caption">
                 <i class="fas fa-sitemap"></i> Overview of the LightEchoNet teacher–student architecture with two‑stage distillation flow.
             </div>
@@ -479,7 +373,7 @@
     </div>
 </section>
 
-<!-- ==================== MOTIVATION ==================== -->
+<!-- ==================== MOTIVATION (NEW) ==================== -->
 <section>
     <div class="container">
         <div class="section-title">
@@ -497,7 +391,7 @@
                 </li>
                 <li style="display:flex; align-items:flex-start; gap:12px; color:#1e293b;">
                     <i class="fas fa-arrow-up" style="color:#2563eb; margin-top:4px; width:20px; text-align:center;"></i>
-                    <span><strong>Limitations of conventional distillation:</strong> Output-level knowledge distillation does not fully transfer the teacher's intermediate representations.</span>
+                    <span><strong>Limitations of conventional distillation:</strong> Output-level knowledge distillation does not fully transfer the teacher’s intermediate representations.</span>
                 </li>
                 <li style="display:flex; align-items:flex-start; gap:12px; color:#1e293b;">
                     <i class="fas fa-cubes" style="color:#2563eb; margin-top:4px; width:20px; text-align:center;"></i>
@@ -640,123 +534,6 @@
         </p>
     </div>
 </div>
-
-<!-- Zoom Script -->
-<script>
-    (function() {
-        const wrapper = document.getElementById('zoomWrapper');
-        const image = document.getElementById('zoomImage');
-        const zoomInBtn = document.getElementById('zoomInBtn');
-        const zoomOutBtn = document.getElementById('zoomOutBtn');
-        const zoomResetBtn = document.getElementById('zoomResetBtn');
-        const zoomLevelDisplay = document.getElementById('zoomLevel');
-
-        let currentZoom = 1;
-        const MIN_ZOOM = 1;
-        const MAX_ZOOM = 4;
-        const ZOOM_STEP = 0.25;
-
-        function updateZoom(zoomFactor) {
-            currentZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoomFactor));
-            const percent = Math.round(currentZoom * 100);
-            image.style.width = (currentZoom * 100) + '%';
-            image.style.transform = `scale(${currentZoom})`;
-            zoomLevelDisplay.textContent = currentZoom + '×';
-            
-            // Update cursor based on zoom state
-            if (currentZoom > 1) {
-                wrapper.style.cursor = 'zoom-out';
-                wrapper.classList.add('zoomed');
-            } else {
-                wrapper.style.cursor = 'zoom-in';
-                wrapper.classList.remove('zoomed');
-            }
-        }
-
-        function zoomIn() {
-            updateZoom(currentZoom + ZOOM_STEP);
-        }
-
-        function zoomOut() {
-            updateZoom(currentZoom - ZOOM_STEP);
-        }
-
-        function resetZoom() {
-            updateZoom(1);
-            wrapper.scrollTop = 0;
-            wrapper.scrollLeft = 0;
-        }
-
-        // Toggle zoom on click
-        wrapper.addEventListener('click', function(e) {
-            if (currentZoom > 1) {
-                resetZoom();
-            } else {
-                zoomIn();
-            }
-        });
-
-        // Button controls
-        zoomInBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            zoomIn();
-        });
-
-        zoomOutBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            zoomOut();
-        });
-
-        zoomResetBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            resetZoom();
-        });
-
-        // Keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            // Only if wrapper is visible and in viewport
-            const rect = wrapper.getBoundingClientRect();
-            if (rect.bottom < 0 || rect.top > window.innerHeight) return;
-            
-            if (e.key === '+' || e.key === '=') {
-                e.preventDefault();
-                zoomIn();
-            } else if (e.key === '-' || e.key === '_') {
-                e.preventDefault();
-                zoomOut();
-            } else if (e.key === '0') {
-                e.preventDefault();
-                resetZoom();
-            }
-        });
-
-        // Mouse wheel zoom (with modifier key for better UX)
-        wrapper.addEventListener('wheel', function(e) {
-            if (e.ctrlKey || e.metaKey) {
-                e.preventDefault();
-                if (e.deltaY < 0) {
-                    zoomIn();
-                } else {
-                    zoomOut();
-                }
-            }
-        }, { passive: false });
-
-        // Initialize
-        updateZoom(1);
-
-        // Handle resize to keep image fitting properly
-        let resizeTimeout;
-        window.addEventListener('resize', function() {
-            clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(function() {
-                // Re-apply zoom level to handle container size changes
-                updateZoom(currentZoom);
-            }, 200);
-        });
-
-    })();
-</script>
 
 </body>
 </html>
