@@ -11,6 +11,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
+    <!-- Medium Zoom for image zoom functionality -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.css">
+
     <style>
         /* ---------- Reset & Base ---------- */
         * {
@@ -211,7 +214,7 @@
             color: #0b1a2e;
         }
 
-        /* --- NEW: SVG showcase above abstract --- */
+        /* --- SVG showcase above abstract --- */
         .model-svg-section {
             background: #ffffff;
             border-radius: 20px;
@@ -240,12 +243,36 @@
             border: 1px solid #e9edf2;
             display: flex;
             justify-content: center;
+            position: relative;
+            cursor: pointer;
         }
         .model-svg-wrapper svg,
         .model-svg-wrapper img {
             max-width: 100%;
             height: auto;
             display: block;
+        }
+        /* Zoom hint overlay */
+        .model-svg-wrapper .zoom-hint {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.7);
+            color: #fff;
+            padding: 8px 14px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            pointer-events: none;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .model-svg-wrapper:hover .zoom-hint {
+            opacity: 1;
         }
         .model-svg-section .svg-caption {
             text-align: center;
@@ -256,6 +283,16 @@
         .model-svg-section .svg-caption i {
             margin-right: 6px;
             color: #64748b;
+        }
+
+        /* Medium-zoom overrides for better UX */
+        .medium-zoom-overlay {
+            background: rgba(10, 20, 40, 0.92) !important;
+            backdrop-filter: blur(4px);
+        }
+        .medium-zoom-image {
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
         }
 
         /* ---------- Results table ---------- */
@@ -304,6 +341,12 @@
             .abstract-box { padding: 20px; }
             .card { padding: 20px; }
             .model-svg-section .svg-title { font-size: 1.25rem; }
+            .model-svg-wrapper .zoom-hint {
+                font-size: 0.7rem;
+                padding: 5px 10px;
+                bottom: 12px;
+                right: 12px;
+            }
         }
     </style>
 </head>
@@ -334,10 +377,22 @@
         <div class="model-svg-section">
             <div class="svg-title">
                 <i class="fas fa-robot"></i> Model Architecture
+                <span style="font-size:0.8rem; font-weight:400; color:#64748b; margin-left:auto;">
+                    <i class="fas fa-mouse-pointer"></i> Click to zoom
+                </span>
             </div>
-            <div class="model-svg-wrapper">
-                <!-- SVG image as requested, placed outside abstract box with its own title -->
-                <img src="/kni5ht/images/Stu_Teachers_Detaileddd.svg" alt="LightEchoNet teacher-student architecture diagram" style="max-width:100%; height:auto; display:block;" />
+            <div class="model-svg-wrapper" id="svg-zoom-container">
+                <!-- SVG image with zoom capability via medium-zoom -->
+                <img 
+                    src="/kni5ht/images/Stu_Teachers_Detaileddd.svg" 
+                    alt="LightEchoNet teacher-student architecture diagram" 
+                    id="svg-zoom-image"
+                    style="max-width:100%; height:auto; display:block;"
+                    data-zoomable
+                />
+                <div class="zoom-hint">
+                    <i class="fas fa-search-plus"></i> Click to zoom
+                </div>
             </div>
             <div class="svg-caption">
                 <i class="fas fa-sitemap"></i> Overview of the LightEchoNet teacher–student architecture with two‑stage distillation flow.
@@ -373,7 +428,7 @@
     </div>
 </section>
 
-<!-- ==================== MOTIVATION (NEW) ==================== -->
+<!-- ==================== MOTIVATION ==================== -->
 <section>
     <div class="container">
         <div class="section-title">
@@ -391,7 +446,7 @@
                 </li>
                 <li style="display:flex; align-items:flex-start; gap:12px; color:#1e293b;">
                     <i class="fas fa-arrow-up" style="color:#2563eb; margin-top:4px; width:20px; text-align:center;"></i>
-                    <span><strong>Limitations of conventional distillation:</strong> Output-level knowledge distillation does not fully transfer the teacher’s intermediate representations.</span>
+                    <span><strong>Limitations of conventional distillation:</strong> Output-level knowledge distillation does not fully transfer the teacher's intermediate representations.</span>
                 </li>
                 <li style="display:flex; align-items:flex-start; gap:12px; color:#1e293b;">
                     <i class="fas fa-cubes" style="color:#2563eb; margin-top:4px; width:20px; text-align:center;"></i>
@@ -534,6 +589,42 @@
         </p>
     </div>
 </div>
+
+<!-- Medium Zoom JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js"></script>
+<script>
+    (function() {
+        // Initialize medium zoom on the SVG image
+        const zoomImage = document.getElementById('svg-zoom-image');
+        if (zoomImage) {
+            const zoom = mediumZoom(zoomImage, {
+                margin: 20,
+                background: 'rgba(10, 20, 40, 0.92)',
+                scrollOffset: 40,
+                container: null,
+                template: null
+            });
+
+            // Add a small visual feedback when zoomed
+            zoom.on('open', function() {
+                // The image is now zoomed
+                const hint = document.querySelector('.model-svg-wrapper .zoom-hint');
+                if (hint) {
+                    hint.innerHTML = '<i class="fas fa-search-minus"></i> Click to zoom out';
+                    hint.style.opacity = '1';
+                }
+            });
+
+            zoom.on('close', function() {
+                const hint = document.querySelector('.model-svg-wrapper .zoom-hint');
+                if (hint) {
+                    hint.innerHTML = '<i class="fas fa-search-plus"></i> Click to zoom';
+                    hint.style.opacity = '0.7';
+                }
+            });
+        }
+    })();
+</script>
 
 </body>
 </html>
