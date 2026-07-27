@@ -14,6 +14,9 @@
     <!-- Medium Zoom for image zoom functionality -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.css">
 
+    <!-- MathJax for proper formula rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
     <style>
         /* ---------- Reset & Base ---------- */
         * {
@@ -348,6 +351,88 @@
                 right: 12px;
             }
         }
+
+        /* ---------- Architecture detail sections ---------- */
+        .arch-detail {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 32px;
+            align-items: flex-start;
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 28px 28px 32px;
+            border: 1px solid #eef2f6;
+            margin-bottom: 32px;
+        }
+        .arch-detail .text {
+            flex: 1 1 45%;
+            min-width: 280px;
+        }
+        .arch-detail .image {
+            flex: 1 1 45%;
+            min-width: 280px;
+            text-align: center;
+        }
+        .arch-detail .image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            border: 1px solid #e9edf2;
+            background: #fafcff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            cursor: pointer;
+        }
+        .arch-detail .image .fig-caption {
+            margin-top: 8px;
+            font-size: 0.9rem;
+            color: #475569;
+        }
+        .arch-detail .image .fig-caption i {
+            margin-right: 6px;
+            color: #64748b;
+        }
+        .arch-detail h4 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #0b1a2e;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .arch-detail h4 i {
+            color: #2563eb;
+        }
+        .arch-detail p {
+            color: #1e293b;
+            margin-bottom: 12px;
+        }
+        .arch-detail ul {
+            padding-left: 20px;
+            color: #1e293b;
+        }
+        .arch-detail ul li {
+            margin-bottom: 6px;
+        }
+
+        /* equations */
+        .equation {
+            background: #f8fafc;
+            padding: 12px 20px;
+            border-radius: 12px;
+            margin: 16px 0;
+            overflow-x: auto;
+            border-left: 4px solid #2563eb;
+            font-size: 0.95rem;
+        }
+        .equation-block {
+            background: #f8fafc;
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin: 16px 0;
+            overflow-x: auto;
+            border-left: 4px solid #2563eb;
+        }
     </style>
 </head>
 <body>
@@ -382,7 +467,6 @@
                 </span>
             </div>
             <div class="model-svg-wrapper" id="svg-zoom-container">
-                <!-- SVG image with zoom capability via medium-zoom -->
                 <img 
                     src="/kni5ht/images/Stu_Teachers_Detaileddd.svg" 
                     alt="LightEchoNet teacher-student architecture diagram" 
@@ -465,32 +549,166 @@
     </div>
 </section>
 
-<!-- ==================== ARCHITECTURE + DISTILLATION DIAGRAMS ==================== -->
+<!-- ==================== ARCHITECTURE DETAILS (renamed) ==================== -->
 <section>
     <div class="container">
         <div class="section-title">
-            <i class="fas fa-project-diagram"></i> Architecture &amp; Distillation Flow
+            <i class="fas fa-project-diagram"></i> Architecture Details
         </div>
-        <div class="grid-2">
 
-            <!-- Architecture diagram -->
-            <div class="figure-box" style="height: 785px; display: flex; flex-direction: column;">
-                <!-- Image architecture diagram -->
-                <img src="/kni5ht/images/ICASSP2027_WithoutBlock.svg" alt="LightEchoNet student architecture diagram" style="width:100%; height:100%; object-fit:contain; background:#f8fafc; border-radius:12px;" />
-                <div class="caption" style="flex-shrink: 0;">
-                    <i class="fas fa-sitemap"></i> Overview of the Teacher–Student Architecture
-                </div>
+        <!-- ---- Subsection 1: Shared Student–Inner-Teacher Backbone ---- -->
+        <div class="arch-detail">
+            <div class="text">
+                <h4><i class="fas fa-sitemap"></i> Shared Student–Inner-Teacher Backbone</h4>
+                <p>
+                    <strong>Figure 1</strong> presents the structurally aligned Light Echo architectures used by the compact student and the inner teacher. Both networks follow the same stage organization and feature dimensions, containing seven LE Blocks arranged as 3+1+3 blocks and nine T–S Block positions in total. This shared structure allows their intermediate features to be compared directly without additional projection layers.
+                </p>
+                <p>
+                    A <strong>T–S Block</strong> is a shared architectural position whose implementation depends on the network:
+                </p>
+                <ul>
+                    <li>In the <strong>student</strong>, it is implemented as a standard 3×3 convolution.</li>
+                    <li>In the <strong>inner teacher</strong>, it is replaced by the more expressive <strong>FusionBlock</strong>, also referred to as <em>FusionConv</em>. As detailed in Figure 2, this block processes features through parallel 3×3, 5×5, 7×7, and 3×1 convolutional branches, followed by Batch Normalization, concatenation, and a 1×1 fusion convolution.</li>
+                </ul>
+                <p>
+                    Seven of the nine T–S Blocks appear inside the seven LE Blocks, while the remaining two are located in the convolutional stem. Each LE Block contains two branches. The <em>transformation branch</em> applies Batch Normalization, a 1×1 pointwise convolution, LeakyReLU, another Batch Normalization layer, a depthwise T–S operation, and a second LeakyReLU. The <em>projection branch</em> applies a pointwise convolution directly to the input, and the outputs of the two branches are added through a residual connection. <strong>ResNorm</strong> is used between the main stages, while <strong>AttnGAP</strong>, Batch Normalization, dropout, and a linear layer form the final classification head.
+                </p>
             </div>
-            
-            <!-- Two‑stage distillation diagram -->
-            <div class="figure-box" style="height: 785px; display: flex; flex-direction: column;">
-                <img src="/kni5ht/images/Student-Arch.png" alt="Two-stage distillation diagram" style="width:100%; height:95%; object-fit:contain; border-radius:12px; background:#f8fafc; display:block;" />
-                <div class="caption" style="flex-shrink: 0;">
-                    <i class="fas fa-arrows-spin"></i> Overview of the LightEchoNet & LightEcho Block Architecture
-                </div>
+            <div class="image">
+                <img src="/kni5ht/images/Student-LE-New.svg" alt="Shared Student–Inner-Teacher Backbone" data-zoomable />
+                <div class="fig-caption"><i class="fas fa-image"></i> Figure 1: Shared LE architecture for student and inner teacher.</div>
             </div>
+        </div>
 
-        </div><!-- /grid -->
+        <!-- ---- Subsection 2: Staged Inner–Outer Knowledge Distillation ---- -->
+        <div class="arch-detail">
+            <div class="text">
+                <h4><i class="fas fa-chalkboard-teacher"></i> Staged Inner–Outer Knowledge Distillation</h4>
+                <p>
+                    <strong>Figure 2</strong> illustrates the proposed staged distillation pipeline. First, the structurally aligned inner teacher transfers both intermediate representations and output-level knowledge to the student. Because the two networks have matching stages and feature dimensions, features from four approximately evenly spaced layers can be matched directly. The student is then refined using an outer teacher, which can be either a single high-performance model or an ensemble of teachers.
+                </p>
+                <p>
+                    The framework therefore combines three forms of supervision:
+                </p>
+                <ul>
+                    <li><strong>Label supervision</strong>, using cross-entropy with the ground-truth labels.</li>
+                    <li><strong>Inner distillation</strong>, consisting of temperature-scaled logit distillation and normalized Huber-based feature matching.</li>
+                    <li><strong>Outer distillation</strong>, using temperature-scaled output probabilities from a single teacher or the average prediction of an ensemble.</li>
+                </ul>
+                <p>
+                    Let \(z_s\), \(z_i\), and \(z_o\) denote the logits of the student, inner teacher, and a single outer teacher, respectively. The outer-teacher target is:
+                </p>
+                <div class="equation">
+                    \[
+                    p_{o}^{T} =
+                    \begin{cases}
+                    \operatorname{softmax}\!\left(\dfrac{z_o}{T}\right),
+                    & \text{single model}, \\[8pt]
+                    \dfrac{1}{K}\displaystyle\sum_{k=1}^{K}
+                    \operatorname{softmax}\!\left(\dfrac{z_k}{T}\right),
+                    & \text{ensemble}.
+                    \end{cases}
+                    \]
+                </div>
+                <p>
+                    The distillation distributions are defined as:
+                </p>
+                <div class="equation">
+                    \[
+                    p_{t}^{T} =
+                    \begin{cases}
+                    \operatorname{softmax}\!\left(\dfrac{z_i}{T}\right),
+                    & \text{inner KD}, \\[8pt]
+                    p_o^T,
+                    & \text{outer KD},
+                    \end{cases}
+                    \qquad
+                    p_s^T =
+                    \operatorname{softmax}\!\left(\dfrac{z_s}{T}\right).
+                    \]
+                </div>
+                <p>
+                    For feature-level inner distillation, student and inner-teacher features at layer \(l\) are \(\ell_2\)-normalized:
+                </p>
+                <div class="equation">
+                    \[
+                    \widehat{F}_s^{(l)}
+                    =
+                    \frac{F_s^{(l)}}
+                    {\left\lVert F_s^{(l)} \right\rVert_2+\varepsilon},
+                    \qquad
+                    \widehat{F}_i^{(l)}
+                    =
+                    \frac{F_i^{(l)}}
+                    {\left\lVert F_i^{(l)} \right\rVert_2+\varepsilon}.
+                    \]
+                </div>
+                <p>
+                    The feature-matching loss over the aligned layer set \(S\) is:
+                </p>
+                <div class="equation">
+                    \[
+                    \mathcal{L}_{\mathrm{feat}}
+                    =
+                    \frac{1}{|S|}
+                    \sum_{l\in S}
+                    \frac{1}{N_l}
+                    \sum_{j=1}^{N_l}
+                    \rho_{\delta}
+                    \left(
+                    \widehat{f}_{s,j}^{(l)}
+                    -
+                    \operatorname{sg}
+                    \left(
+                    \widehat{f}_{i,j}^{(l)}
+                    \right)
+                    \right),
+                    \]
+                </div>
+                <p>
+                    where \(\operatorname{sg}(\cdot)\) stops gradients through the teacher and \(\delta = 1\). The Huber function is:
+                </p>
+                <div class="equation">
+                    \[
+                    \rho_{\delta}(u)
+                    =
+                    \begin{cases}
+                    \dfrac{1}{2}u^2,
+                    & |u|\leq\delta, \\[8pt]
+                    \delta\left(|u|-\dfrac{\delta}{2}\right),
+                    & \text{otherwise}.
+                    \end{cases}
+                    \]
+                </div>
+                <p>
+                    The complete inner-distillation objective is:
+                </p>
+                <div class="equation">
+                    \[
+                    \mathcal{L}
+                    =
+                    (1-\alpha)\,
+                    \mathcal{L}_{\mathrm{CE}}(z_s,y)
+                    +
+                    \alpha T^2\,
+                    \mathcal{L}_{\mathrm{KL}}
+                    \left(
+                    p_t^T \,\Vert\, p_s^T
+                    \right)
+                    +
+                    \beta\,
+                    \mathcal{L}_{\mathrm{feat}}.
+                    \]
+                </div>
+                <p>
+                    Here, \(\alpha\) balances ground-truth and logit supervision, while \(\beta\) controls feature matching. During outer-teacher refinement, supervision is provided through cross-entropy and output-level KL distillation, without inner feature matching. After training, both teachers are discarded, so the final deployed model retains exactly the student's original architecture and inference cost.
+                </p>
+            </div>
+            <div class="image">
+                <img src="/kni5ht/images/ICASSP2027_WithoutBlock.svg" alt="Staged Inner–Outer Knowledge Distillation" data-zoomable />
+                <div class="fig-caption"><i class="fas fa-image"></i> Figure 2: Staged distillation pipeline with inner and outer teachers.</div>
+            </div>
+        </div>
     </div>
 </section>
 
@@ -594,7 +812,7 @@
 <script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js"></script>
 <script>
     (function() {
-        // Initialize medium zoom on the SVG image
+        // Initialize medium zoom on the main SVG image
         const zoomImage = document.getElementById('svg-zoom-image');
         if (zoomImage) {
             const zoom = mediumZoom(zoomImage, {
@@ -605,9 +823,7 @@
                 template: null
             });
 
-            // Add a small visual feedback when zoomed
             zoom.on('open', function() {
-                // The image is now zoomed
                 const hint = document.querySelector('.model-svg-wrapper .zoom-hint');
                 if (hint) {
                     hint.innerHTML = '<i class="fas fa-search-minus"></i> Click to zoom out';
@@ -623,7 +839,23 @@
                 }
             });
         }
+
+        // Also make the new architecture images zoomable
+        document.querySelectorAll('.arch-detail .image img[data-zoomable]').forEach(img => {
+            mediumZoom(img, {
+                margin: 20,
+                background: 'rgba(229, 231, 235, 0.92)',
+                scrollOffset: 40
+            });
+        });
     })();
+</script>
+
+<!-- MathJax re-render after dynamic content -->
+<script>
+    if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise();
+    }
 </script>
 
 </body>
